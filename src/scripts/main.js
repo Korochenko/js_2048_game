@@ -1,7 +1,17 @@
 'use strict';
 
-// Uncomment the next lines to use your game instance in the browser
-// const Game = require('../modules/Game.class');
-// const game = new Game();
+const Game = require('../modules/Game.class');
+const game = new Game();
 
-// Write your code here
+document.addEventListener('DOMContentLoaded', () => {
+  const startButton = document.querySelector('.button.start');
+
+  startButton.addEventListener('click', () => {
+    game.restart();
+    startButton.textContent = 'Restart';
+  });
+
+  document.addEventListener('keydown', (e) => {
+    game.handleKey(e.key);
+  });
+});
