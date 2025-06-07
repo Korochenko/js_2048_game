@@ -1,12 +1,14 @@
 'use strict';
 
 class Game {
-  constructor(initialState = [
-    [0, 0, 0, 0],
-    [0, 0, 0, 0],
-    [0, 0, 0, 0],
-    [0, 0, 0, 0]
-  ]) {
+  constructor(
+    initialState = [
+      [0, 0, 0, 0],
+      [0, 0, 0, 0],
+      [0, 0, 0, 0],
+      [0, 0, 0, 0],
+    ],
+  ) {
     this.board = initialState;
     this.score = 0;
     this.status = 'idle';
@@ -14,33 +16,44 @@ class Game {
 
   generateNewTitle() {
     const emptyCells = [];
-    for (let row = 0; row < 4; row++) {
-      for (let col = 0; col < 4; col++) {
-        if (this.board[row][col] === 0) {
-          emptyCells.push([row, col]);
+
+    for (let r = 0; r < 4; r++) {
+      for (let c = 0; c < 4; c++) {
+        if (this.board[r][c] === 0) {
+          emptyCells.push([r, c]);
         }
       }
     }
 
-    if (emptyCells.length === 0) return;
+    if (emptyCells.length === 0) {
+      return;
+    }
 
-    const [row, col] = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+    const [row, col] =
+      emptyCells[Math.floor(Math.random() * emptyCells.length)];
     const newTileValue = Math.random() < 0.9 ? 2 : 4;
+
     this.board[row][col] = newTileValue;
   }
 
   render() {
     const cells = document.querySelectorAll('.field-cell');
-    if (!cells.length) return;
+
+    if (!cells.length) {
+      return;
+    }
 
     let index = 0;
+
     for (let row = 0; row < 4; row++) {
       for (let col = 0; col < 4; col++) {
         const value = this.board[row][col];
         const cell = cells[index];
+
         cell.textContent = value !== 0 ? value : '';
 
         cell.className = 'field-cell';
+
         if (value !== 0) {
           cell.classList.add(`field-cell--${value}`);
         } else {
@@ -53,6 +66,7 @@ class Game {
 
     // Оновити рахунок у DOM
     const scoreElement = document.querySelector('.game-score');
+
     if (scoreElement) {
       scoreElement.textContent = this.score;
     }
@@ -60,7 +74,7 @@ class Game {
 
   moveLeft() {
     for (let row = 0; row < 4; row++) {
-      let newRow = this.board[row].filter(x => x !== 0);
+      let newRow = this.board[row].filter((x) => x !== 0);
 
       for (let i = 0; i < newRow.length - 1; i++) {
         if (newRow[i] === newRow[i + 1]) {
@@ -70,15 +84,18 @@ class Game {
         }
       }
 
-      newRow = newRow.filter(x => x !== 0);
-      while (newRow.length < 4) newRow.push(0);
+      newRow = newRow.filter((x) => x !== 0);
+
+      while (newRow.length < 4) {
+        newRow.push(0);
+      }
       this.board[row] = newRow;
     }
   }
 
   moveRight() {
     for (let row = 0; row < 4; row++) {
-      let newRow = this.board[row].filter(x => x !== 0);
+      let newRow = this.board[row].filter((x) => x !== 0);
 
       for (let i = newRow.length - 1; i > 0; i--) {
         if (newRow[i] === newRow[i - 1]) {
@@ -88,18 +105,24 @@ class Game {
         }
       }
 
-      newRow = newRow.filter(x => x !== 0);
-      while (newRow.length < 4) newRow.unshift(0);
+      newRow = newRow.filter((x) => x !== 0);
+
+      while (newRow.length < 4) {
+        newRow.unshift(0);
+      }
       this.board[row] = newRow;
     }
   }
 
   moveUp() {
     for (let col = 0; col < 4; col++) {
-      let colData = [];
-      for (let row = 0; row < 4; row++) colData.push(this.board[row][col]);
+      const colData = [];
 
-      let newCol = colData.filter(x => x !== 0);
+      for (let row = 0; row < 4; row++) {
+        colData.push(this.board[row][col]);
+      }
+
+      let newCol = colData.filter((x) => x !== 0);
 
       for (let i = 0; i < newCol.length - 1; i++) {
         if (newCol[i] === newCol[i + 1]) {
@@ -109,19 +132,27 @@ class Game {
         }
       }
 
-      newCol = newCol.filter(x => x !== 0);
-      while (newCol.length < 4) newCol.push(0);
+      newCol = newCol.filter((x) => x !== 0);
 
-      for (let row = 0; row < 4; row++) this.board[row][col] = newCol[row];
+      while (newCol.length < 4) {
+        newCol.push(0);
+      }
+
+      for (let row = 0; row < 4; row++) {
+        this.board[row][col] = newCol[row];
+      }
     }
   }
 
   moveDown() {
     for (let col = 0; col < 4; col++) {
-      let colData = [];
-      for (let row = 0; row < 4; row++) colData.push(this.board[row][col]);
+      const colData = [];
 
-      let newCol = colData.filter(x => x !== 0);
+      for (let row = 0; row < 4; row++) {
+        colData.push(this.board[row][col]);
+      }
+
+      let newCol = colData.filter((x) => x !== 0);
 
       for (let i = newCol.length - 1; i > 0; i--) {
         if (newCol[i] === newCol[i - 1]) {
@@ -131,10 +162,15 @@ class Game {
         }
       }
 
-      newCol = newCol.filter(x => x !== 0);
-      while (newCol.length < 4) newCol.unshift(0);
+      newCol = newCol.filter((x) => x !== 0);
 
-      for (let row = 0; row < 4; row++) this.board[row][col] = newCol[row];
+      while (newCol.length < 4) {
+        newCol.unshift(0);
+      }
+
+      for (let row = 0; row < 4; row++) {
+        this.board[row][col] = newCol[row];
+      }
     }
   }
 
@@ -142,32 +178,56 @@ class Game {
     for (let row = 0; row < 4; row++) {
       for (let col = 0; col < 4; col++) {
         const current = this.board[row][col];
-        if (current === 0) return false;
-        if (col < 3 && current === this.board[row][col + 1]) return false;
-        if (row < 3 && current === this.board[row + 1][col]) return false;
+
+        if (current === 0) {
+          return false;
+        }
+
+        if (col < 3 && current === this.board[row][col + 1]) {
+          return false;
+        }
+
+        if (row < 3 && current === this.board[row + 1][col]) {
+          return false;
+        }
       }
     }
+
     return true;
   }
 
   isWin() {
     for (let row = 0; row < 4; row++) {
       for (let col = 0; col < 4; col++) {
-        if (this.board[row][col] === 2048) return true;
+        if (this.board[row][col] === 2048) {
+          return true;
+        }
       }
     }
+
     return false;
   }
 
   handleKey(key) {
-    if (this.status !== 'playing') return;
+    if (this.status !== 'playing') {
+      return;
+    }
 
     switch (key) {
-      case 'ArrowLeft': this.moveLeft(); break;
-      case 'ArrowRight': this.moveRight(); break;
-      case 'ArrowUp': this.moveUp(); break;
-      case 'ArrowDown': this.moveDown(); break;
-      default: return;
+      case 'ArrowLeft':
+        this.moveLeft();
+        break;
+      case 'ArrowRight':
+        this.moveRight();
+        break;
+      case 'ArrowUp':
+        this.moveUp();
+        break;
+      case 'ArrowDown':
+        this.moveDown();
+        break;
+      default:
+        return;
     }
 
     this.generateNewTitle();
@@ -187,7 +247,7 @@ class Game {
       [0, 0, 0, 0],
       [0, 0, 0, 0],
       [0, 0, 0, 0],
-      [0, 0, 0, 0]
+      [0, 0, 0, 0],
     ];
     this.score = 0;
     this.status = 'playing';
