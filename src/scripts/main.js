@@ -5,9 +5,14 @@ const game = new Game();
 
 document.addEventListener('DOMContentLoaded', () => {
   const startButton = document.querySelector('.button.start');
+  
 
   startButton.addEventListener('click', () => {
     game.restart();
+
+    startButton.classList.remove('start');
+    startButton.classList.add('restart');
+
     startButton.textContent = 'Restart';
   });
 
@@ -15,3 +20,4 @@ document.addEventListener('DOMContentLoaded', () => {
     game.handleKey(e.key);
   });
 });
+
