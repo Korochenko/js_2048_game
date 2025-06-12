@@ -14,26 +14,51 @@ class Game {
     this.status = 'idle';
   }
 
-  generateNewTitle() {
-    const emptyCells = [];
-
+  hasEmptyTile() {
     for (let r = 0; r < 4; r++) {
       for (let c = 0; c < 4; c++) {
         if (this.board[r][c] === 0) {
-          emptyCells.push([r, c]);
+          return true;
         }
       }
     }
 
-    if (emptyCells.length === 0) {
+    return false;
+  }
+
+  generateNewTitle() {
+    if (!this.hasEmptyTile()) {
       return;
     }
 
-    const [row, col] =
-      emptyCells[Math.floor(Math.random() * emptyCells.length)];
-    const newTileValue = Math.random() < 0.9 ? 2 : 4;
+    let found = false;
 
-    this.board[row][col] = newTileValue;
+    while (!found) {
+      const r = Math.floor(Math.random() * 4);
+      const c = Math.floor(Math.random() * 4);
+
+      if (this.board[r][c] === 0) {
+        this.board[r][c] = 2;
+
+        const tile = document.getElementById(r.toString() + '-' + c.toString());
+
+        tile.innerText = '2';
+        tile.classList.add('x2');
+        found = true;
+      }
+    }
+  }
+
+  boardsEqual(b1, b2) {
+    for (let r = 0; r < 4; r++) {
+      for (let c = 0; c < 4; c++) {
+        if (b1[r][c] !== b2[r][c]) {
+          return false;
+        }
+      }
+    }
+
+    return true;
   }
 
   render() {
@@ -64,7 +89,6 @@ class Game {
       }
     }
 
-    // Оновити рахунок у DOM
     const scoreElement = document.querySelector('.game-score');
 
     if (scoreElement) {
@@ -213,6 +237,8 @@ class Game {
       return;
     }
 
+    const oldBoard = this.board.map((row) => [...row]);
+
     switch (key) {
       case 'ArrowLeft':
         this.moveLeft();
@@ -230,15 +256,19 @@ class Game {
         return;
     }
 
-    this.generateNewTitle();
-    this.render();
+    const boardChanged = !this.boardsEqual(oldBoard, this.board);
 
-    if (this.isWin() && this.status !== 'win') {
-      this.status = 'win';
-      document.querySelector('.message-win')?.classList.remove('hidden');
-    } else if (this.isGameOver()) {
-      this.status = 'lose';
-      document.querySelector('.message-lose')?.classList.remove('hidden');
+    if (boardChanged) {
+      this.generateNewTitle();
+      this.render();
+
+      if (this.isWin() && this.status !== 'win') {
+        this.status = 'win';
+        document.querySelector('.message-win')?.classList.remove('hidden');
+      } else if (this.isGameOver()) {
+        this.status = 'lose';
+        document.querySelector('.message-lose')?.classList.remove('hidden');
+      }
     }
   }
 
